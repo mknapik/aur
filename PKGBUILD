@@ -1,9 +1,20 @@
 pkgbase=mmk
-pkgname=(mmk-cli mmk-git mmk-rng mmk-utils)
+pkgname=(
+    mmk-cli
+    mmk-git
+    mmk-rng
+    mmk-utils
+    mmk-top-utils
+    mmk-hw-utils
+    mmk-network-utils
+    mmk-docker
+    mmk-browser
+)
 pkgver=0.0.1
 pkgrel=1
 arch=('any')
 license=('MIT')
+groups=(mmk)
 
 package_mmk-cli() {
     pkgdesc='Brave new world of cli tools.'
@@ -45,5 +56,51 @@ package_mmk-rng() {
 package_mmk-utils() {
     depends=(
         'entr'
+    )
+}
+
+package_mmk-hw-utils() {
+    pkgdesc='Terminal and GUI tools for hardware identification.'
+    depends=(
+        'lshw'
+        'hardinfo'
+        'cpu-x'
+    )
+}
+
+package_mmk-network-utils() {
+    pkgdesc='Network traffic top and utils.'
+    depends=(
+        'slurm'
+        'netwatch'
+        'jnettop'
+    )
+}
+
+package_mmk-top-utils() {
+    depends=(
+        'htop'
+        'btop' # beautiful gradients
+        'powertop'
+        'atop'
+        'iotop'
+        's-tui' # top with temps and RPMs
+    )
+}
+
+package_mmk-docker() {
+    depends=(
+        'docker'
+        'docker-compose'
+        'lazydocker'
+        'ctop'
+    )
+}
+
+package_mmk-browser() {
+    depends=(
+        'firefox'
+        'hunspell-en_US'
+        'hunspell-pl'
     )
 }
