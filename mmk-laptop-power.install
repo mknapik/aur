@@ -1,0 +1,11 @@
+post_install() {    
+    systemctl enable --now tlp
+    systemctl mask systemd-rfkill.service
+    systemctl mask systemd-rfkill.socket
+}
+
+pre_remove() {
+    systemctl unmask systemd-rfkill.service
+    systemctl unmask systemd-rfkill.socket
+    systemctl disable --now tlp
+}

@@ -1,0 +1,7 @@
+post_install() {
+    chsh -s $(which fish)
+}
+
+post_remove() {
+    chsh -s $(which bash)
+}

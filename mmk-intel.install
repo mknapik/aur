@@ -1,0 +1,7 @@
+post_install() {    
+    systemctl enable --now thermald
+}
+
+pre_remove() {
+    systemctl disable --now thermald
+}

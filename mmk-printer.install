@@ -1,0 +1,3 @@
+post_install() {
+    egrep '^hpaio$' /etc/sane.d/dll.conf && sudo sh -c 'echo hpaio >> /etc/sane.d/dll.conf'
+}

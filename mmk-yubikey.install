@@ -1,0 +1,17 @@
+post_install() {
+    userid=$(getent group wheel | cut -d':' -f 4 | tail -n 1 | xargs id -u)
+    if [[ ! -z "$userid" && -e "/run/user/${userid}/bus" ]]; then
+        sudo -u "#${userid}" \
+            env DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/${userid}/bus" \
+            systemctl --user enable --now yubikey-touch-detector
+    fi
+}
+
+pre_remove() {
+    userid=$(getent group wheel | cut -d':' -f 4 | tail -n 1 | xargs id -u)
+    if [[ ! -z "$userid" && -e "/run/user/${userid}/bus" ]]; then
+        sudo -u "#${userid}" \
+            env DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/${userid}/bus" \
+            systemctl --user disable --now yubikey-touch-detector
+    fi
+}
