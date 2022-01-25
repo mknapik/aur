@@ -1,10 +1,15 @@
 pkgbase=mmk
 pkgname=(
+    mmk-backup
+    mmk-keyboard
+    mmk-ntp
+    mmk-bt
     mmk-base
-    mmk-base-gui
+    mmk-base-devel
     mmk-browser
     mmk-communication
     mmk-desktop
+    mmk-dev
     mmk-dev-cli
     mmk-dev-gui
     mmk-docker
@@ -25,15 +30,21 @@ pkgname=(
     mmk-network-gui
     mmk-rng
     mmk-arch
+    mmk-system
     mmk-security
     mmk-shell
     mmk-sound
+    mmk-sound-gui
     mmk-sway
     mmk-top-utils
     mmk-utils
     mmk-video-amd
     mmk-yubikey
     mmk-build
+    mmk-mailspring
+    mmk-virtualization
+    mmk-printer
+    mmk-optional-cli
 )
 pkgver=0.0.1
 pkgrel=1
@@ -42,24 +53,16 @@ license=(MIT)
 groups=(mmk)
 
 
-package_mmk-base-gui() {
-    depends=(
-        mmk-hw-gui
-        mmk-git-gui
-        mmk-software-gui
-        mmk-network-gui
-        mmk-fonts
-    )
-}
-
 package_mmk-base() {
     pkgdesc='Best practices for setting up an Arch after installation. '
     depends=(
+        mmk-system
         mmk-shell
         mmk-rng
         mmk-ntp
         mmk-network
         mmk-bt
+        mmk-keyboard
 
         mmk-neocli
         mmk-utils
@@ -80,8 +83,17 @@ package_mmk-base() {
         mmk-security
         mmk-sound
         mmk-sway
-        mmk-mailspring
         mmk-backup
+
+        mmk-printer
+        mmk-hw-gui
+        mmk-dev-gui
+        mmk-git-gui
+        mmk-software-gui
+        mmk-network-gui
+        mmk-fonts
+        mmk-sound-gui
+        mmk-virtualization
     )
 }
 
@@ -102,6 +114,7 @@ package_mmk-desktop() {
 
         mmk-base
         mmk-base-gui
+        msi-rgb
     )
 }
 
@@ -127,6 +140,8 @@ package_mmk-neocli() {
         procs
         exa
         ripgrep
+        the_silver_searcher
+        sysstat
     )
 }
 
@@ -137,6 +152,9 @@ package_mmk-git() {
         tig
         gitui
         git-delta
+        git-lfs
+        gitlint
+        hub
     )
 }
 package_mmk-git-gui() {
@@ -147,11 +165,23 @@ package_mmk-git-gui() {
 
 package_mmk-dev() {
     depends=(
+        meson
+        postgresql-libs
+        picocom
+        wol
+        ansible
+        tokei
+        tmate
+        thefuck
+        terraform
+        packer
+        redis
+        rustup
         ipcalc
         android-udev
         hyperfine
-        pass-otp
         gradle
+        maven
         hadolint-bin
         ktlint
         lefthook
@@ -162,6 +192,9 @@ package_mmk-dev-gui() {
     depends=(
         intellij-idea-community-edition
         keybase-gui
+        meld
+        mongodb-compass
+        postman-bin
     )
 }
 
@@ -171,17 +204,18 @@ package_mmk-dev-cli() {
         aws-session-manager-plugin
         aws-vault
         
-        glow-bin
+        multitail
+        glow-bin # markdown viewer
+        patat-bin # pandoc viewer
         jq
         yq
-        xq
         fx
         jwt-cli-bin
         jiq-bin
         asdf-vm
         direnv
-        tealdeer
-        httpie
+        tealdeer # tldr
+        httpie # curl alternative
     )
 }
 
@@ -191,8 +225,6 @@ package-mmk-optional-cli() {
         tabview-git # CMD tools for CSV viewing.
         speedtest-cli
         cmatrix
-
-        chrysalis-bin # Kaleidoscope, Chrysalis fo Keyboard.io
     )
 }
 
@@ -209,34 +241,144 @@ package_mmk-arch() {
         dpkg
         pacman-contrib
 
-        grub
+        # mirrorlist
+        repose
+        reflector
+        pkgfile
+        pkgtools
+        pkgtop
+        pacdep
+        pacman
+        yay
     )
 }
 
+package_mmk-system() {
+    depends=(
+        logrotate
+        unp
+        bzip2
+        p7zip
+        unrar
+        unace
+        unzip
+        time
+        wget
+        systemd
+        scdoc
+        s-nail
+        less
+        sysfsutils
+        procps-ng # ps pkill pgrep free, etc
+        patchutils
+        openssh
+        vim
+        neovim
+        nano
+        micro
+
+        bind
+        bison
+
+        acpid
+        usbutils
+        samba
+        sed
+        shadow
+        sudo
+        
+        efibootmgr
+        grub
+        os-prober
+
+        terminus-font
+        rygel
+
+        linux
+        linux-headers
+        linux-firmware
+        licenses
+        lostfiles
+        lsb-release
+
+        man-db
+        man-pages
+
+        mmk-base-devel
+    )
+}
+
+package_mmk-base-devel() {
+    depends=(
+        autoconf
+        automake
+        binutils
+        bison
+        fakeroot
+        file
+        findutils
+        flex
+        gawk
+        gcc
+        gettext
+        grep
+        groff
+        gzip
+        libtool
+        m4
+        make
+        pacman
+        patch
+        pkgconf
+        sed
+        sudo
+        texinfo
+        which
+    )
+}
 package_mmk-fs() {
     depends=(
+        jfsutils
+        xfsprogs
+        ntfs-3g
+        nfs-utils
         exfat-utils
+        reiserfsprogs
+        gcsf-git
+        mdadm
+        lvm2
     )
 }
 
 package_mmk-utils() {
     depends=(
+        mimeo
+        trash-cli
+        nnn
+        xplr
+        mc
+        rclone
         entr
         hyperfine
         zoxide # jump
         mediainfo
         skim
         fzf
-        ranger
         etckeeper # vcs for /etc
-        neofetch xorg-xwininfo
+        neofetch
+        lsdesktopf
+        xorg-xwininfo
     )
 }
 
 package_mmk-mailspring() {
     depends=(
         mailspring
-        execstack dpkg rpm
+
+        execstack
+        dpkg
+        rpm
+        rpm-tools
     )
 }
 
@@ -250,10 +392,10 @@ package_mmk-ntp() {
 package_mmk-virtualization() {
     install="$pkgname.install"
     depends=(
-        kvm
         libvirt
         qemu
         virt-manager
+        virt-viewer
 
         # network
         iptables-nft dnsmasq # NAT/DHCP networking
@@ -264,6 +406,8 @@ package_mmk-virtualization() {
         dmidecode
 
         vagrant
+        virtualbox
+        virtualbox-host-modules-arch
     )
 }
 
@@ -298,6 +442,8 @@ package_mmk-hw-control() {
 package_mmk-hw-utils() {
     pkgdesc='Terminal and GUI tools for hardware identification.'
     depends=(
+        hdparm
+        cpupower
         hwinfo
         geekbench
         lshw
@@ -310,7 +456,8 @@ package_mmk-hw-utils() {
 package_mmk-backup() {
     pkgdesc='Backup strategy'
     depends=(
-        borgomatic
+        borgmatic
+        borg
     )
 }
 
@@ -333,29 +480,41 @@ package_mmk-network-gui() {
 
 package_mmk-network() {
     depends=(
+        network-manager-applet
         nm-connection-editor
         networkmanager-strongswan
         networkmanager-l2tp
-        wireguard-tools
+        networkmanager-openconnect
+        networkmanager-vpnc
 
         # bonjour/zeroconf network printer software
         avahi 
         nss-mdns
+
+        wireguard-tools
+        nordvpn-bin
+        
     )
 }
 
 package_mmk-network-utils() {
     pkgdesc='Network traffic top and utils.'
     depends=(
+        nmap
+        traceroute
+        mtr
         ipcalc
         iperf3
+        iputils # ping
+        prettyping
         inetutils # telnet
         iftop
         slurm
         netwatch
         jnettop
-        gnu-netcat
+        openbsd-netcat
         bandwhich
+        nethogs
     )
 }
 
@@ -375,7 +534,7 @@ package_mmk-docker() {
     depends=(
         docker
         docker-compose
-        lazydocker
+        lazydocker-bin
         ctop
         docker-credential-secretservice # Keep docker credentials in Keyring
         container-diff
@@ -384,6 +543,7 @@ package_mmk-docker() {
 
 package_mmk-browser() {
     depends=(
+        chromium
         firefox
         hunspell-en_US
         hunspell-pl
@@ -391,17 +551,32 @@ package_mmk-browser() {
 }
 package_mmk-fonts() {
     depends=(
+        adobe-source-han-serif-jp-fonts
         adobe-source-code-pro-fonts
         nerd-fonts-complete
         ttf-fira-code # monospace ligatures font
         otf-fira-code
         noto-fonts
         noto-fonts-emoji
+        unicode-emoji
+        ttf-jetbrains-mono
+        ttf-dejavu
     )
 }
 
 package_mmk-sway() {
     depends=(
+        # screenshot
+        swappy
+        slurp
+        grim
+
+        seahorse
+
+        # python-pywal
+        xdg-user-dirs
+        xdg-user-dirs-gtk
+
         sway
         swaybg
         swayidle
@@ -416,17 +591,16 @@ package_mmk-sway() {
         rofi-emoji
         rofi-dmenu
         rofi-lbonn-wayland-git # rofi
+        lastpass-cli
         
         bluetooth-headset-battery-level-git
-
-        dex
-        kanshi
 
         wob
         avizo
 
         zenity
         alacritty
+        redshift-wlr-gamma-control-git
 
         wl-clipboard
         wl-clipboard-x11 # xclip xsel for wayland
@@ -434,23 +608,34 @@ package_mmk-sway() {
 
         otf-font-awesome # glyph font for Sway icons
         polkit-gnome
-        wf-recorder-git
+        wf-recorder
         sxiv
         gammastep
         udiskie
 
+        dex
+        kanshi
+
+        mako
+        notify-desktop-git
+
         arandr
+        wdisplays
 
         kdeconnect
+        qt5-wayland
+        qt5-base
 
         adwaita-dark
         arc-gtk-theme
         arc-icon-theme
+        lxappearance
 
         nautilus
         nautilus-sendto
         
         gparted
+        gnome-keyring
         gnome-calculator
         gnome-color-manager
         gnome-disk-utility
@@ -462,6 +647,12 @@ package_mmk-sway() {
         gnome-user-share
         gnome-video-effects
 
+        pop-sound-theme-bin
+
+        gnome-themes-standard
+        gnome-themes-extra
+
+        xdg-desktop-portal
         xdg-desktop-portal-wlr
 
 
@@ -518,6 +709,7 @@ package_mmk-laptop-power() {
     install="$pkgname.install"
     depends=(
         tlp # power management (battery/ac)
+        tlp-rdw
     )
 }
 
@@ -530,10 +722,18 @@ package_mmk-communication() {
 
 package_mmk-security() {
     depends=(
-        mmk-yubikey
+        lastpass-cli
+        pwgen
         authy
+        pam-krb5
+        pam-u2f
+        pam_pkcs11
+        pass-otp
+        pcsc-tools
+        mmk-yubikey
     )
 }
+
 package_mmk-yubikey() {
     install="$pkgname.install"
     depends=(
@@ -546,19 +746,40 @@ package_mmk-yubikey() {
 }
 
 package_mmk-software-gui() {
-    install="$pkgname.install"
     depends=(
+        authy
+
         alacritty
         baobab
         calibre
+        libreoffice-fresh
+        libreoffice-fresh-pl
+        postgresql-libs # optional dep for libreoffice
         file-roller
+        google-earth-pro
+
+        mmk-mailspring
+        minder
+
+        # obs-studio
+        # wlrobs # obs plugin
 
         remmina
 
         spotify
+        slack-desktop
+        simple-scan
+        signal-desktop
+        stacer
+
+        transmission-gtk
+        transmission-cli
+
+        visual-studio-code-bin
 
         zathura # pdf viewer with vim keybindings
         zathura-pdf-mupdf
+        libmupdf
         zathura-ps
 
         zeal
@@ -569,29 +790,62 @@ package_mmk-video-amd() {
     install="$pkgname.install"
     provides=(mmk-acceleration)
     depends=(
-        mesa-demos # glxinfo
+        mesa-utils # glxinfo
+        mesa-demos
         vulkan-tools # vulkaninfo
         libva-mesa-driver # radeonsi_drv
         mesa-vdpau # vdpau radeonsi
-        radeon-profile
-        radeon-profile-daemon
+        radeon-profile-git
+        radeon-profile-daemon-git
         amdgpu-fan
         xf86-video-amdgpu
         xf86-video-ati
+        vulkan-radeon
+        vdpauinfo
+        libva-utils
     )
 }
 
 package_mmk-sound() {
     depends=(
+        celt
         libldac
         pamixer
         playerctl
+        alsa-utils
+        sox
+        mpv
+        # pipewire-jack
+        pipewire
+        pulsemixer
+        pulseaudio-alsa
+    )
+}
+
+package_mmk-sound-gui() {
+    depends=(
+        easyeffects
+        pavucontrol
     )
 }
 
 package_mmk-build() {
     depends=(
-        cmake freetype2 fontconfig make pkgconf
+        cmake
+        freetype2
+        fontconfig
+        make
+        pkgconf
         binutils
+    )
+}
+
+package_mmk-keyboard() {
+    depends=(
+        workman-git
+        xkbmap-compose-hyper-git
+        interception-tools
+        interception-compose-git
+        chrysalis-bin # Kaleidoscope, Chrysalis fo Keyboard.io
     )
 }
