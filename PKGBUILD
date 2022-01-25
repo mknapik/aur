@@ -219,7 +219,7 @@ package_mmk-dev-cli() {
     )
 }
 
-package-mmk-optional-cli() {
+package_mmk-optional-cli() {
     depends=(
         visidata
         tabview-git # CMD tools for CSV viewing.
@@ -304,6 +304,7 @@ package_mmk-system() {
         man-db
         man-pages
 
+        mmk-build
         mmk-base-devel
     )
 }
