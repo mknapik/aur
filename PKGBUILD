@@ -375,7 +375,9 @@ package_mmk-utils() {
 package_mmk-mailspring() {
     depends=(
         mailspring
+        gcc10
 
+        gconf
         execstack
         dpkg
         rpm
