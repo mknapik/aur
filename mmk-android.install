@@ -1,0 +1,17 @@
+post_install() {
+    username=$(getent group wheel | cut -d':' -f 4 | tail -n 1)
+
+    sudo groupadd flutterusers
+    sudo gpasswd -a $username flutterusers
+    sudo chown -R :flutterusers /opt/flutter
+    sudo chmod -R g+w /opt/flutter/
+
+    sudo groupadd android-sdk
+    sudo gpasswd -a $username android-sdk
+    sudo setfacl -R -m g:android-sdk:rwx /opt/android-sdk
+    sudo setfacl -d -m g:android-sdk:rwX /opt/android-sdk
+
+}
+
+pre_remove() {
+}

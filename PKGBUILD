@@ -1,5 +1,6 @@
 pkgbase=mmk
 pkgname=(
+    mmk-android
     mmk-backup
     mmk-keyboard
     mmk-ntp
@@ -183,8 +184,19 @@ package_mmk-dev() {
         gradle
         maven
         hadolint-bin
-        ktlint
         lefthook
+    )
+}
+
+package_mmk-android() {
+    depends=(
+        ncurses5-compat-libs
+        flutter
+
+        android-sdk
+        android-sdk-platform-tools
+        android-sdk-build-tools
+        android-platform
     )
 }
 

@@ -1,4 +1,4 @@
-post_install() {    
+post_install() {
     username=$(getent group wheel | cut -d':' -f 4 | tail -n 1)
     if [[ ! -z "$username" ]]; then
         usermod -a -G libvirt $username
