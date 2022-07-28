@@ -1,6 +1,6 @@
 default:
-	make build
-	make repo
+	$(MAKE) build
+	$(MAKE) repo
 
 repo:
 	repo-add ${PWD}/mmk.db.tar.gz ${PWD}/*.pkg.tar.zst
