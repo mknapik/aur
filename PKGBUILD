@@ -47,7 +47,7 @@ pkgname=(
     mmk-dev-gui
 )
 pkgver=0.0.1
-pkgrel=6
+pkgrel=7
 arch=(any)
 license=(MIT)
 groups=(mmk)
@@ -260,6 +260,7 @@ package_mmk-utils() {
     depends=(
         moreutils # chronic, sponge & co
         mmv # multiple files move
+        dog # better dig
 
         mimeo
         trash-cli
@@ -737,6 +738,7 @@ package_mmk-docker() {
 
 package_mmk-dev() {
     depends=(
+        go-task-bin
         postgresql-libs
         picocom
         wol

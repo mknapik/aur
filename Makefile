@@ -34,9 +34,19 @@ migrate:
 	@aur sync -d mmk-aur --root ${HOME}/arch/aur -r ${PACKAGE}
 	@sudo pacman -Sy --noconfirm --asdeps ${PACKAGE}
 
+builddir:
+	@mkdir -p ${BUILDDIR}
+
+orphans:
+	@pacman -Qtdq
+
+clean:
+	@git clean -fdx
+
 from-kbfs:
 	@rsync -avh /run/user/1000/keybase/kbfs/private/mknapik/arch/ ${HOME}/arch
 to-kbfs:
 	@rsync -avh --delete ${HOME}/arch/ /run/user/1000/keybase/kbfs/private/mknapik/arch
 
 .PHONY: default repo build
+	
