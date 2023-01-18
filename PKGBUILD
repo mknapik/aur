@@ -153,6 +153,7 @@ package_mmk-arch() {
         pacman
         pkgtools
         # pacdep
+        ccache
     )
 }
 
