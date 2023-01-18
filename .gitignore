@@ -4,3 +4,4 @@
 !Makefile
 !*.install
 !sync_filter
+!Taskfile.yaml

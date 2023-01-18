@@ -47,7 +47,7 @@ pkgname=(
     mmk-dev-gui
 )
 pkgver=0.0.1
-pkgrel=3
+pkgrel=4
 arch=(any)
 license=(MIT)
 groups=(mmk)
@@ -791,7 +791,7 @@ package_mmk-git() {
         git-lfs
         gitlint
         github-cli
-        heroku-cli-bin
+        heroku-cli
     )
 }
 package_mmk-git-gui() {

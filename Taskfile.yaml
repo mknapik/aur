@@ -1,0 +1,43 @@
+# https://taskfile.dev
+
+version: '3'
+
+vars:
+  BUCKET: mmk-aur
+  DIR: local-repo
+
+tasks:
+  default:
+    cmds:
+      - echo "{{.GREETING}}"
+    silent: true
+  sync:
+    cmds:
+      - task: rsync
+      - task: no-cache
+  rsync:
+    cmds:
+      - gsutil -m rsync -d {{.DIR}} gs://{{.BUCKET}}/x86_64
+  no-cache:
+    cmds:
+      - gcloud storage objects update --recursive gs://{{.BUCKET}}/ --cache-control=no-cache
+
+  aur-sync:
+    cmds:
+      - aur sync --repo mmk --root $PWD/local-repo -r {{.CLI_ARGS}}
+
+  aur-to-pacman:
+    desc: 'uninstall and install'
+    cmds:
+      - paru -Rns {{.CLI_ARGS}}
+      - task: aur-sync
+        vars:
+          CLI_ARGS: "{{.CLI_ARGS}}"
+      - sudo pacman -Sy --asdeps {{.CLI_ARGS}}
+  to-kbfs:
+    cmds:
+      - rsync -r {{.DIR}}/ /run/user/1000/keybase/kbfs/private/mknapik/aur
+
+  from-kbfs:
+    cmds:
+      - rsync -r /run/user/1000/keybase/kbfs/private/mknapik/aur $HOME/aur/local-repo
