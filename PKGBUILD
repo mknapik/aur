@@ -666,6 +666,7 @@ package_mmk-software-gui() {
 
         code
         code-marketplace
+        code-features
 
         zathura # pdf viewer with vim keybindings
         zathura-pdf-mupdf
