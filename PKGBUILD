@@ -41,12 +41,13 @@ pkgname=(
     mmk-optional-cli
 
 
+    mmk-cpu-amd
     mmk-dev
     mmk-dev-cli
     mmk-dev-gui
 )
 pkgver=0.0.1
-pkgrel=1
+pkgrel=3
 arch=(any)
 license=(MIT)
 groups=(mmk)
@@ -151,7 +152,7 @@ package_mmk-arch() {
         pkgtop
         pacman
         pkgtools
-        pacdep
+        # pacdep
     )
 }
 
@@ -201,6 +202,8 @@ package_mmk-system() {
         licenses
         lostfiles
         lsb-release
+
+        archlinux-keyring
 
         man-db
         man-pages
