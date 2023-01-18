@@ -3,9 +3,9 @@ default:
 	$(MAKE) repo
 
 sync:
-	cp ${PWD}/mmk.{db,files}.tar.gz ${HOME}/aur
-	cp ${PWD}/mmk.{db,files} ${HOME}/aur
-	cp ${PWD}/*.pkg.tar.zst ${HOME}/aur
+	cp ${PWD}/mmk-meta.{db,files}.tar.gz ${HOME}/arch/meta/
+	cp ${PWD}/mmk-meta.{db,files} ${HOME}/arch/meta/
+	cp ${PWD}/*.pkg.tar.zst ${HOME}/arch/meta/
 
 repo:
 	repo-add ${PWD}/mmk-meta.db.tar.gz ${PWD}/*.pkg.tar.zst
@@ -31,8 +31,8 @@ migrate:
 	@sudo pacman -Sy --noconfirm --asdeps ${PACKAGE}
 
 from-kbfs:
-	@rsync -avh /run/user/1000/keybase/kbfs/private/mknapik/arch/ ~/arch
+	@rsync -avh /run/user/1000/keybase/kbfs/private/mknapik/arch/ ${HOME}/arch
 to-kbfs:
-	@rsync -avh ~/arch/ /run/user/1000/keybase/kbfs/private/mknapik/arch
+	@rsync -avh --delete ${HOME}/arch/ /run/user/1000/keybase/kbfs/private/mknapik/arch
 
 .PHONY: default repo build

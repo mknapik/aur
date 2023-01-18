@@ -3,3 +3,4 @@
 !PKGBUILD
 !Makefile
 !*.install
+!sync_filter
