@@ -47,7 +47,7 @@ pkgname=(
     mmk-dev-gui
 )
 pkgver=0.0.1
-pkgrel=4
+pkgrel=6
 arch=(any)
 license=(MIT)
 groups=(mmk)
@@ -258,6 +258,7 @@ package_mmk-fs() {
 package_mmk-utils() {
     depends=(
         moreutils # chronic, sponge & co
+        mmv # multiple files move
 
         mimeo
         trash-cli
@@ -688,10 +689,12 @@ package_mmk-video-amd() {
         amdgpu-fan
         xf86-video-amdgpu
         xf86-video-ati
-        vulkan-radeon
         vdpauinfo
         libva-utils
         radeontop
+        nvtop
+        vulkan-radeon # RADV Mesa
+        amdvlk # AMDVLK Open
     )
 }
 
