@@ -8,11 +8,7 @@ pkgname=(
     mmk-base
     mmk-base-devel
     mmk-browser
-    mmk-communication
     mmk-desktop
-    mmk-dev
-    mmk-dev-cli
-    mmk-dev-gui
     mmk-docker
     mmk-fonts
     mmk-fs
@@ -22,9 +18,6 @@ pkgname=(
     mmk-hw-utils
     mmk-hw-control
     mmk-hw-gui
-    mmk-intel
-    mmk-laptop
-    mmk-laptop-power
     mmk-neocli
     mmk-network
     mmk-network-utils
@@ -46,6 +39,11 @@ pkgname=(
     mmk-virtualization
     mmk-printer
     mmk-optional-cli
+
+
+    mmk-dev
+    mmk-dev-cli
+    mmk-dev-gui
 )
 pkgver=0.0.1
 pkgrel=1
@@ -80,7 +78,6 @@ package_mmk-base() {
         mmk-fs
         mmk-arch
         mmk-browser
-        mmk-communication
         mmk-security
         mmk-sound
         mmk-sway
@@ -94,18 +91,6 @@ package_mmk-base() {
         mmk-network-gui
         mmk-fonts
         mmk-sound-gui
-        mmk-virtualization
-    )
-}
-
-package_mmk-laptop() {
-
-    depends=(
-        mmk-laptop-power
-        mmk-intel
-
-        mmk-base
-        mmk-base-gui
     )
 }
 
@@ -114,127 +99,30 @@ package_mmk-desktop() {
         mmk-video-amd
 
         mmk-base
-        mmk-base-gui
+
         msi-rgb
-    )
-}
-
-package_mmk-shell() {
-    install="$pkgname.install"
-    depends=(
-        fish
-        fisher
-        tmux
-    )
-}
-
-package_mmk-neocli() {
-    pkgdesc='Brave new world of cli tools.'
-    depends=(
-        dfrs
-        duf
-        dust
-        ncdu
-        bat
-        sd
-        fd
-        procs
-        exa
-        ripgrep
-        the_silver_searcher
-        sysstat
-    )
-}
-
-package_mmk-git() {
-    pkgdesc='Git Terminal UI tools.'
-    depends=(
-        lazygit
-        tig
-        gitui
-        git-delta
-        git-lfs
-        gitlint
-        hub
-    )
-}
-package_mmk-git-gui() {
-    depends=(
-        meld # difftool GUI diff tool
-    )
-}
-
-package_mmk-dev() {
-    depends=(
-        meson
-        postgresql-libs
-        picocom
-        wol
-        ansible
-        tokei
-        tmate
-        thefuck
-        terraform
-        packer
-        redis
-        rustup
-        ipcalc
-        android-udev
-        hyperfine
-        gradle
-        maven
-        hadolint-bin
-        lefthook
     )
 }
 
 package_mmk-android() {
     depends=(
-        ncurses5-compat-libs
-        flutter
-
+        android-udev
         android-sdk
         android-sdk-platform-tools
         android-sdk-build-tools
         android-platform
-    )
-}
 
-package_mmk-dev-gui() {
-    depends=(
-        intellij-idea-community-edition
-        keybase-gui
-        meld
-        mongodb-compass
-        postman-bin
-    )
-}
-
-package_mmk-dev-cli() {
-    depends=(
-        aws-cli-v2-bin
-        aws-session-manager-plugin
-        aws-vault
-        
-        multitail
-        glow-bin # markdown viewer
-        patat-bin # pandoc viewer
-        jq
-        yq
-        fx
-        jwt-cli-bin
-        jiq-bin
-        asdf-vm
-        direnv
-        tealdeer # tldr
-        httpie # curl alternative
+        revanced-builder
+        revanced-cli
+        revanced-integrations
+        revanced-patches
     )
 }
 
 package_mmk-optional-cli() {
     depends=(
         visidata
-        tabview-git # CMD tools for CSV viewing.
+        # tabview-git # CMD tools for CSV viewing.
         speedtest-cli
         cmatrix
     )
@@ -249,26 +137,28 @@ package_mmk-rng() {
 
 package_mmk-arch() {
     depends=(
-        dialog etc-update
+        dialog
+        etc-update
         dpkg
         pacman-contrib
 
+        aurutils
+        paru
+        pkgtop
         # mirrorlist
-        repose
         reflector
         pkgfile
-        pkgtools
         pkgtop
-        pacdep
         pacman
-        yay
+        pkgtools
+        pacdep
     )
 }
 
 package_mmk-system() {
     depends=(
         logrotate
-        unp
+        unp # unpack all
         bzip2
         p7zip
         unrar
@@ -300,7 +190,6 @@ package_mmk-system() {
         sudo
         
         efibootmgr
-        grub
         os-prober
 
         terminus-font
@@ -357,7 +246,7 @@ package_mmk-fs() {
         nfs-utils
         exfat-utils
         reiserfsprogs
-        gcsf-git
+        # gcsfc
         mdadm
         lvm2
     )
@@ -365,11 +254,16 @@ package_mmk-fs() {
 
 package_mmk-utils() {
     depends=(
+        moreutils # chronic, sponge & co
+
         mimeo
         trash-cli
-        nnn
+
+        # file navigator
+        lf
         xplr
         mc
+
         rclone
         entr
         hyperfine
@@ -381,19 +275,23 @@ package_mmk-utils() {
         neofetch
         lsdesktopf
         xorg-xwininfo
+
+        ventoy-bin # live linux
+        subliminal # subtitles
     )
 }
 
 package_mmk-mailspring() {
     depends=(
         mailspring
-        gcc10
 
-        gconf
-        execstack
-        dpkg
-        rpm
-        rpm-tools
+        ## build deps
+        # gcc10
+        # gconf
+        # execstack
+        # dpkg
+        # rpm
+        # rpm-tools
     )
 }
 
@@ -413,7 +311,8 @@ package_mmk-virtualization() {
         virt-viewer
 
         # network
-        iptables-nft dnsmasq # NAT/DHCP networking
+        iptables-nft
+        dnsmasq # NAT/DHCP networking
         bridge-utils
         openbsd-netcat
         net-tools
@@ -421,8 +320,8 @@ package_mmk-virtualization() {
         dmidecode
 
         vagrant
-        virtualbox
-        virtualbox-host-modules-arch
+        # virtualbox
+        # virtualbox-host-modules-arch
     )
 }
 
@@ -442,15 +341,23 @@ package_mmk-hw-gui() {
         gsmartcontrol
         gwakeonlan
         guvcview
+        gnome-firmware
     )
 }
 
 package_mmk-hw-control() {
     depends=(
         gammastep
-        brillo
+        # brillo
         light
         ddcutil
+        # ddcci-driver-linux-dkms
+    )
+}
+
+package_mmk-cpu-amd() {
+    depends=(
+        amd-ucode
     )
 }
 
@@ -460,7 +367,8 @@ package_mmk-hw-utils() {
         hdparm
         cpupower
         hwinfo
-        geekbench
+        # geekbench
+        # phoronix-test-suite
         lshw
         hardinfo
         cpu-x
@@ -484,6 +392,7 @@ package_mmk-bt() {
         bluez-utils
         bluetooth-headset-battery-level-git
         libldac
+        chntpw # sync bluetooth codes windows&linux
     )
 }
 
@@ -507,8 +416,6 @@ package_mmk-network() {
         nss-mdns
 
         wireguard-tools
-        nordvpn-bin
-        
     )
 }
 
@@ -524,7 +431,7 @@ package_mmk-network-utils() {
         prettyping
         inetutils # telnet
         iftop
-        slurm
+        # slurm
         netwatch
         jnettop
         openbsd-netcat
@@ -545,32 +452,14 @@ package_mmk-top-utils() {
     )
 }
 
-package_mmk-docker() {
-    depends=(
-        docker
-        docker-compose
-        lazydocker-bin
-        ctop
-        docker-credential-secretservice # Keep docker credentials in Keyring
-        container-diff
-    )
-}
-
-package_mmk-browser() {
-    depends=(
-        chromium
-        firefox
-        hunspell-en_US
-        hunspell-pl
-    )
-}
 package_mmk-fonts() {
     depends=(
         adobe-source-han-serif-jp-fonts
         adobe-source-code-pro-fonts
+        
         nerd-fonts-complete
+
         ttf-fira-code # monospace ligatures font
-        otf-fira-code
         noto-fonts
         noto-fonts-emoji
         unicode-emoji
@@ -597,7 +486,8 @@ package_mmk-sway() {
         swayidle
         waybar
         swaylock-effects
-        swayr-git
+        swayr
+        swaync
         wlogout # logout menu
         
         xorg-xwayland
@@ -606,16 +496,17 @@ package_mmk-sway() {
         rofi-emoji
         rofi-dmenu
         rofi-lbonn-wayland-git # rofi
+
         lastpass-cli
         
         bluetooth-headset-battery-level-git
 
-        wob
+        # wob
         avizo
 
         zenity
         alacritty
-        redshift-wlr-gamma-control-git
+        gammastep
 
         wl-clipboard
         wl-clipboard-x11 # xclip xsel for wayland
@@ -712,29 +603,6 @@ package_mmk-sway() {
     )
 }
 
-package_mmk-intel() {
-    install="$pkgname.install"
-    depends=(
-        thermald
-    )
-}
-
-
-package_mmk-laptop-power() {
-    install="$pkgname.install"
-    depends=(
-        tlp # power management (battery/ac)
-        tlp-rdw
-    )
-}
-
-package_mmk-communication() {
-    depends=(
-        zoom
-        discord
-    )
-}
-
 package_mmk-security() {
     depends=(
         lastpass-cli
@@ -771,7 +639,7 @@ package_mmk-software-gui() {
         libreoffice-fresh-pl
         postgresql-libs # optional dep for libreoffice
         file-roller
-        google-earth-pro
+        # google-earth-pro
 
         mmk-mailspring
         minder
@@ -781,16 +649,17 @@ package_mmk-software-gui() {
 
         remmina
 
-        spotify
+        # spotify
         slack-desktop
         simple-scan
         signal-desktop
-        stacer
+        # stacer
 
         transmission-gtk
         transmission-cli
 
-        visual-studio-code-bin
+        code
+        code-marketplace
 
         zathura # pdf viewer with vim keybindings
         zathura-pdf-mupdf
@@ -811,6 +680,7 @@ package_mmk-video-amd() {
         libva-mesa-driver # radeonsi_drv
         mesa-vdpau # vdpau radeonsi
         radeon-profile-git
+        # corectrl
         radeon-profile-daemon-git
         amdgpu-fan
         xf86-video-amdgpu
@@ -818,29 +688,7 @@ package_mmk-video-amd() {
         vulkan-radeon
         vdpauinfo
         libva-utils
-    )
-}
-
-package_mmk-sound() {
-    depends=(
-        celt
-        libldac
-        pamixer
-        playerctl
-        alsa-utils
-        sox
-        mpv
-        # pipewire-jack
-        pipewire
-        pulsemixer
-        pulseaudio-alsa
-    )
-}
-
-package_mmk-sound-gui() {
-    depends=(
-        easyeffects
-        pavucontrol
+        radeontop
     )
 }
 
@@ -852,15 +700,159 @@ package_mmk-build() {
         make
         pkgconf
         binutils
+        meson
+        ninja
+    )
+}
+
+# veted
+
+package_mmk-browser() {
+    depends=(
+        chromium
+        firefox
+        hunspell-en_US
+        hunspell-pl
+    )
+}
+
+package_mmk-docker() {
+    depends=(
+        docker
+        docker-compose
+        lazydocker
+        ctop
+        dive
+        docker-credential-secretservice # Keep docker credentials in Keyring
+        container-diff
+    )
+}
+
+package_mmk-dev() {
+    depends=(
+        postgresql-libs
+        picocom
+        wol
+        ansible
+        tokei
+        tmate
+        thefuck
+        terraform
+        packer
+        redis
+        rustup
+        ipcalc
+        android-udev
+        hyperfine
+        hadolint
+        lefthook
+        mycli
+    )
+}
+
+package_mmk-dev-gui() {
+    depends=(
+        keybase-gui
+        meld
+        mongodb-compass
+    )
+}
+
+package_mmk-dev-cli() {
+    depends=(
+        aws-cli-v2
+        aws-session-manager-plugin
+        aws-vault
+        
+        multitail
+        glow # markdown viewer
+        # patat # pandoc viewer
+        jq
+        yq
+        fx
+        jwt-cli
+        asdf-vm
+        direnv
+        tealdeer # tldr
+        httpie # curl alternative
+    )
+}
+
+package_mmk-git() {
+    pkgdesc='Git Terminal UI tools.'
+    depends=(
+        lazygit
+        tig
+        gitui
+        git-delta
+        git-lfs
+        gitlint
+        github-cli
+        heroku-cli-bin
+    )
+}
+package_mmk-git-gui() {
+    depends=(
+        meld # difftool GUI diff tool
     )
 }
 
 package_mmk-keyboard() {
     depends=(
-        workman-git
         xkbmap-compose-hyper-git
         interception-tools
         interception-compose-git
         chrysalis-bin # Kaleidoscope, Chrysalis fo Keyboard.io
+        wev
+    )
+}
+
+package_mmk-neocli() {
+    pkgdesc='Brave new world of cli tools.'
+    depends=(
+        dfrs
+        duf
+        dust
+        ncdu
+        bat
+        sd
+        fd
+        procs
+        exa
+        ripgrep
+        the_silver_searcher
+        sysstat
+    )
+}
+
+package_mmk-shell() {
+    install="$pkgname.install"
+    depends=(
+        fish
+        fisher
+        tmux
+    )
+}
+
+
+package_mmk-sound() {
+    depends=(
+        celt
+        libldac
+        pamixer
+        playerctl
+        sox
+        mpv
+        # pipewire-jack
+        pipewire-pulse
+        pulsemixer
+    )
+}
+
+package_mmk-sound-gui() {
+    depends=(
+        avizo
+        easyeffects
+        pavucontrol
     )
 }
