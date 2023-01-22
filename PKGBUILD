@@ -47,7 +47,7 @@ pkgname=(
     mmk-dev-gui
 )
 pkgver=0.0.1
-pkgrel=7
+pkgrel=9
 arch=(any)
 license=(MIT)
 groups=(mmk)
@@ -612,6 +612,9 @@ package_mmk-sway() {
 package_mmk-security() {
     depends=(
         lastpass-cli
+        1password
+        1password-cli
+
         pwgen
         authy
         pam-krb5
@@ -770,6 +773,8 @@ package_mmk-dev-gui() {
 
 package_mmk-dev-cli() {
     depends=(
+        google-cloud-sdk
+
         aws-cli-v2
         aws-session-manager-plugin
         aws-vault

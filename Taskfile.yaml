@@ -92,6 +92,13 @@ tasks:
     cmds:
       - pacman -Qtdq
 
+  pacman:clean:
+    cmds:
+      - sudo paru -Sc --noconfirm
+  pacman:update:
+    cmds:
+      - sudo pacman -Syu --noconfirm
+
   clean:
     cmds:
       - git clean -fdx
