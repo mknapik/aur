@@ -47,7 +47,7 @@ pkgname=(
     mmk-dev-gui
 )
 pkgver=0.0.1
-pkgrel=9
+pkgrel=10
 arch=(any)
 license=(MIT)
 groups=(mmk)
@@ -243,6 +243,7 @@ package_mmk-base-devel() {
     )
 }
 package_mmk-fs() {
+    install="$pkgname.install"
     depends=(
         jfsutils
         xfsprogs
@@ -253,6 +254,7 @@ package_mmk-fs() {
         # gcsfc
         mdadm
         lvm2
+        util-linux
     )
 }
 
@@ -304,7 +306,6 @@ package_mmk-mailspring() {
 package_mmk-ntp() {
     install="$pkgname.install"
     depends=(
-        ntp
     )
 }
 

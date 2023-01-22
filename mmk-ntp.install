@@ -1,7 +1,8 @@
 post_install() {
-    systemctl enable --now ntpd
+    systemctl enable --now systemd-timesyncd
+    timedatectl set-ntp true
 }
 
 pre_remove() {
-    systemctl disable --now ntpd
+    systemctl disable --now systemd-timesyncd
 }
