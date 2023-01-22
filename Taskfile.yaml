@@ -109,3 +109,11 @@ tasks:
   aur:kbfs:download:
     cmds:
       - rsync -avh --delete {{.KBFS_HOME}}/{{.AUR_DIR}}/ {{.SYSTEM_REPO_AUR_DIR}}
+
+  repo:install:
+    cmds:
+      - sudo cp mmk-arch.conf /etc/pacman.d/
+    sources:
+      - mmk-arch.conf
+    generates:
+      - /etc/pacman.d/mmk-arch.conf
