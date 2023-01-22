@@ -47,7 +47,7 @@ pkgname=(
     mmk-dev-gui
 )
 pkgver=0.0.1
-pkgrel=10
+pkgrel=11
 arch=(any)
 license=(MIT)
 groups=(mmk)

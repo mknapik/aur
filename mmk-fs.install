@@ -1,7 +1,7 @@
 post_install() {
-    systemctl enable --now fstrim
+    systemctl enable --now fstrim.timer
 }
 
 pre_remove() {
-    systemctl disable --now fstrim
+    systemctl disable --now fstrim.timer
 }
