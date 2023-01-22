@@ -775,6 +775,7 @@ package_mmk-dev-gui() {
 package_mmk-dev-cli() {
     depends=(
         google-cloud-sdk
+        python-crcmod # for gcloud rsync
 
         aws-cli-v2
         aws-session-manager-plugin

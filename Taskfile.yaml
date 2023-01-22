@@ -12,6 +12,7 @@ vars:
   SYSTEM_REPO_AUR_DIR: '{{.HOME}}/{{.AUR_DIR}}'
   KBFS_HOME: /run/user/1000/keybase/kbfs/private/mknapik
   PACKAGE_DIR: '{{.PWD}}/packages'
+  RSYNC_CMD: rsync -ahP --delete
 
 env:
   BUILDDIR: '{{ .XDG_RUNTIME_DIR | default "/tmp" }}/arch-pkgbuild/'
@@ -19,6 +20,7 @@ env:
 
 tasks:
   meta:gcloud:sync:
+    desc: 'Copy from kbfs to gcloud'
     cmds:
       - task: meta:kbfs:download
       - task: meta:gcloud:upload
@@ -26,12 +28,19 @@ tasks:
     cmds:
       - gsutil -m rsync -rd {{.SYSTEM_REPO_META_DIR}} gs://{{.BUCKET}}/mmk-meta/x86_64
       - gcloud storage objects update --recursive gs://{{.BUCKET}}/mmk-meta/x86_64 --cache-control=no-cache
+
+  aur:gcloud:sync:
+    desc: 'Copy from kbfs to gcloud'
+    cmds:
+      - task: aur:kbfs:download
+      - task: aur:gcloud:upload
   aur:gcloud:upload:
     cmds:
       - gsutil -m rsync -rd {{.SYSTEM_REPO_AUR_DIR}} gs://{{.BUCKET}}/mmk-aur/x86_64
       - gcloud storage objects update --recursive gs://{{.BUCKET}}/mmk-aur/x86_64 --cache-control=no-cache
 
   meta:
+    desc: 'Sync, build, and upload packages'
     cmds:
       - task: meta:kbfs:download
       - task: meta:build
@@ -57,23 +66,27 @@ tasks:
   
   meta:sync:
     cmds:
-      - rsync -avh --delete {{.PACKAGE_DIR}}/ {{.SYSTEM_REPO_META_DIR}}
+      - |-
+        {{.RSYNC_CMD}} {{.PACKAGE_DIR}}/ {{.SYSTEM_REPO_META_DIR}}
 
-  meta:list-deps:
+  aur:add:
+    desc: 'Add AUR package to mmk-aur repository'
+    deps: [aur:kbfs:download]
     cmds:
-      - cat PKGBUILD | grep "        " | sd "\#.+" "" | sd "\s+" "\n" | sort | uniq
-
-  aur:
-    cmds:
-      - task: aur:kbfs:download
       - task: aur:sync
         vars:
           CLI_ARGS: "{{.CLI_ARGS}}"
       - task: aur:kbfs:upload
+    preconditions:
+      - test -n "{{.CLI_ARGS}}"
 
   aur:sync:
     cmds:
-      - aur sync -d mmk-aur --root {{.SYSTEM_REPO_AUR_DIR}} -r {{.CLI_ARGS}}
+      - aur sync --database mmk-aur --root {{.SYSTEM_REPO_AUR_DIR}} -r {{.CLI_ARGS}}
+
+  aur:sync:update:
+    cmds:
+      - aur sync --database mmk-aur --root {{.SYSTEM_REPO_AUR_DIR}} --upgrades
 
   aur:migrate:
     desc: 'uninstall and install'
@@ -83,41 +96,72 @@ tasks:
         vars:
           CLI_ARGS: "{{.CLI_ARGS}}"
       - sudo pacman -Sy --noconfirm --asdeps {{.CLI_ARGS}}
+  
+  aur:update:
+    desc: 'Update AUR packages in mmk-aur repository'
+    deps: [aur:kbfs:download]
+    cmds:
+      - task: aur:sync:update
+      - task: aur:kbfs:upload
 
   pacman:explicit-tree:
+    desc: 'Show packages tree'
     cmds:
       - pacman -Qeq | xargs -I{} pactree -rco1 {} | cat
 
   pacman:orphans:
+    desc: 'Show orphaned packages'
     cmds:
       - pacman -Qtdq
 
   pacman:clean:
+    desc: 'Clean pacman cache'
     cmds:
       - sudo paru -Sc --noconfirm
   pacman:update:
+    desc: 'Update all packages'
     cmds:
       - sudo pacman -Syu --noconfirm
 
   clean:
+    desc: 'Remove non-source files from the repository'
     cmds:
       - git clean -fdx
 
 
   meta:kbfs:upload:
     cmds:
-      - rsync -avh --delete {{.SYSTEM_REPO_META_DIR}}/ {{.KBFS_HOME}}/{{.META_DIR}}
+      - |-
+        {{.RSYNC_CMD}} {{.SYSTEM_REPO_META_DIR}}/ {{.KBFS_HOME}}/{{.META_DIR}}
   aur:kbfs:upload:
     cmds:
-      - rsync -avh --delete {{.SYSTEM_REPO_AUR_DIR}}/ {{.KBFS_HOME}}/{{.AUR_DIR}}
+      - |-
+        {{.RSYNC_CMD}} {{.SYSTEM_REPO_AUR_DIR}}/ {{.KBFS_HOME}}/{{.AUR_DIR}}
   meta:kbfs:download:
     cmds:
-      - rsync -avh --delete {{.KBFS_HOME}}/{{.META_DIR}}/ {{.SYSTEM_REPO_META_DIR}}
+      - |-
+        {{.RSYNC_CMD}} {{.KBFS_HOME}}/{{.META_DIR}}/ {{.SYSTEM_REPO_META_DIR}}
   aur:kbfs:download:
     cmds:
-      - rsync -avh --delete {{.KBFS_HOME}}/{{.AUR_DIR}}/ {{.SYSTEM_REPO_AUR_DIR}}
+      - |-
+        {{.RSYNC_CMD}} {{.KBFS_HOME}}/{{.AUR_DIR}}/ {{.SYSTEM_REPO_AUR_DIR}}
 
   repo:install:
+    deps: [repo:install:mmk-arch]
+    cmds:
+      - task: repo:install:mmk-meta
+      - task: repo:install:mmk-aur
+  repo:install:mmk-meta:
+    cmds:
+      - sudo su -c 'echo \n[mmk-meta]\nInclude = /etc/pacman.d/mmk-arch.conf >> /etc/pacman.conf'
+    status:
+      - cat /etc/pacman.conf | grep -E '^\[mmk-aur\]$'
+  repo:install:mmk-aur:
+    cmds:
+      - sudo su -c 'echo \n[mmk-aur]\nInclude = /etc/pacman.d/mmk-arch.conf >> /etc/pacman.conf'
+    status:
+      - cat /etc/pacman.conf | grep -E '^\[mmk-aur\]$'
+  repo:install:mmk-arch:
     cmds:
       - sudo cp mmk-arch.conf /etc/pacman.d/
     sources:
