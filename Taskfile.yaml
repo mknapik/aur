@@ -1,43 +1,111 @@
-# https://taskfile.dev
-
 version: '3'
 
+silent: true
+
 vars:
-  BUCKET: mmk-aur
-  DIR: local-repo
+  BUCKET: mmk-arch
+  AUR_DIR: arch/mmk-aur
+  META_DIR: arch/mmk-meta
+  REPOS_DIR: '{{.HOME}}/arch'
+  META_FILE: mmk-meta.db.tar.gz
+  SYSTEM_REPO_META_DIR: '{{.HOME}}/{{.META_DIR}}'
+  SYSTEM_REPO_AUR_DIR: '{{.HOME}}/{{.AUR_DIR}}'
+  KBFS_HOME: /run/user/1000/keybase/kbfs/private/mknapik
+  PACKAGE_DIR: '{{.PWD}}/packages'
+
+env:
+  BUILDDIR: '{{ .XDG_RUNTIME_DIR | default "/tmp" }}/arch-pkgbuild/'
+  PKGDEST: '{{.PACKAGE_DIR}}'
 
 tasks:
-  default:
+  meta:gcloud:sync:
     cmds:
-      - echo "{{.GREETING}}"
-    silent: true
-  sync:
+      - task: meta:kbfs:download
+      - task: meta:gcloud:upload
+  meta:gcloud:upload:
     cmds:
-      - task: rsync
-      - task: no-cache
-  rsync:
+      - gsutil -m rsync -rd {{.SYSTEM_REPO_META_DIR}} gs://{{.BUCKET}}/mmk-meta/x86_64
+      - gcloud storage objects update --recursive gs://{{.BUCKET}}/mmk-meta/x86_64 --cache-control=no-cache
+  aur:gcloud:upload:
     cmds:
-      - gsutil -m rsync -d {{.DIR}} gs://{{.BUCKET}}/x86_64
-  no-cache:
-    cmds:
-      - gcloud storage objects update --recursive gs://{{.BUCKET}}/ --cache-control=no-cache
+      - gsutil -m rsync -rd {{.SYSTEM_REPO_AUR_DIR}} gs://{{.BUCKET}}/mmk-aur/x86_64
+      - gcloud storage objects update --recursive gs://{{.BUCKET}}/mmk-aur/x86_64 --cache-control=no-cache
 
-  aur-sync:
+  meta:
     cmds:
-      - aur sync --repo mmk --root $PWD/local-repo -r {{.CLI_ARGS}}
+      - task: meta:kbfs:download
+      - task: meta:build
+      - task: meta:repo
+      - task: meta:sync
+      - task: meta:kbfs:upload
+  meta:build:
+    cmds:
+      - makepkg -sfcC
+    sources:
+      - PKGBUILD
+      - mmk-*.install
+    generates:
+      - '{{.PACKAGE_DIR}}/*.pkg.tar.zst'
+  
+  meta:repo:
+    cmds:
+      - repo-add {{.PACKAGE_DIR}}/{{.META_FILE}} {{.PACKAGE_DIR}}/*.pkg.tar.zst
+    generates:
+      - '{{.PACKAGE_DIR}}/{{.META_FILE}}'
+    sources:
+      - '{{.PACKAGE_DIR}}/*.pkg.tar.zst'
+  
+  meta:sync:
+    cmds:
+      - rsync -avh --delete {{.PACKAGE_DIR}}/ {{.SYSTEM_REPO_META_DIR}}
 
-  aur-to-pacman:
-    desc: 'uninstall and install'
+  meta:list-deps:
     cmds:
-      - paru -Rns {{.CLI_ARGS}}
-      - task: aur-sync
+      - cat PKGBUILD | grep "        " | sd "\#.+" "" | sd "\s+" "\n" | sort | uniq
+
+  aur:
+    cmds:
+      - task: aur:kbfs:download
+      - task: aur:sync
         vars:
           CLI_ARGS: "{{.CLI_ARGS}}"
-      - sudo pacman -Sy --asdeps {{.CLI_ARGS}}
-  to-kbfs:
-    cmds:
-      - rsync -r {{.DIR}}/ /run/user/1000/keybase/kbfs/private/mknapik/aur
+      - task: aur:kbfs:upload
 
-  from-kbfs:
+  aur:sync:
     cmds:
-      - rsync -r /run/user/1000/keybase/kbfs/private/mknapik/aur $HOME/aur/local-repo
+      - aur sync -d mmk-aur --root {{.SYSTEM_REPO_AUR_DIR}} -r {{.CLI_ARGS}}
+
+  aur:migrate:
+    desc: 'uninstall and install'
+    cmds:
+      - paru -Rns {{.CLI_ARGS}} || true
+      - task: aur:sync
+        vars:
+          CLI_ARGS: "{{.CLI_ARGS}}"
+      - sudo pacman -Sy --noconfirm --asdeps {{.CLI_ARGS}}
+
+  pacman:explicit-tree:
+    cmds:
+      - pacman -Qeq | xargs -I{} pactree -rco1 {} | cat
+
+  pacman:orphans:
+    cmds:
+      - pacman -Qtdq
+
+  clean:
+    cmds:
+      - git clean -fdx
+
+
+  meta:kbfs:upload:
+    cmds:
+      - rsync -avh --delete {{.SYSTEM_REPO_META_DIR}}/ {{.KBFS_HOME}}/{{.META_DIR}}
+  aur:kbfs:upload:
+    cmds:
+      - rsync -avh --delete {{.SYSTEM_REPO_AUR_DIR}}/ {{.KBFS_HOME}}/{{.AUR_DIR}}
+  meta:kbfs:download:
+    cmds:
+      - rsync -avh --delete {{.KBFS_HOME}}/{{.META_DIR}}/ {{.SYSTEM_REPO_META_DIR}}
+  aur:kbfs:download:
+    cmds:
+      - rsync -avh --delete {{.KBFS_HOME}}/{{.AUR_DIR}}/ {{.SYSTEM_REPO_AUR_DIR}}

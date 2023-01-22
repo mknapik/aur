@@ -1,7 +1,2 @@
-*.pkg.tar.zst
-*
-!PKGBUILD
-!Makefile
-!*.install
-!sync_filter
-!Taskfile.yaml
+packages/
+.task/
