@@ -5,10 +5,9 @@ pkgname=(
     mmk-keyboard
     mmk-ntp
     mmk-bt
-    mmk-base
-    mmk-base-devel
+    mmk-full
+    mmk-devel
     mmk-browser
-    mmk-desktop
     mmk-docker
     mmk-fonts
     mmk-fs
@@ -40,20 +39,24 @@ pkgname=(
     mmk-printer
     mmk-optional-cli
 
+    mmk-voskhod
+    mmk-mir
+    mmk-laika
 
     mmk-cpu-amd
     mmk-dev
     mmk-dev-cli
     mmk-dev-gui
+    mmk-dev-php
 )
 pkgver=0.0.1
-pkgrel=11
+pkgrel=12
 arch=(any)
 license=(MIT)
 groups=(mmk)
 
 
-package_mmk-base() {
+package_mmk-full() {
     pkgdesc='Best practices for setting up an Arch after installation. '
     depends=(
         mmk-system
@@ -95,13 +98,34 @@ package_mmk-base() {
     )
 }
 
-package_mmk-desktop() {
+package_mmk-laika() {
     depends=(
         mmk-video-amd
+        mmk-cpu-amd
 
-        mmk-base
+        mmk-full
+    )
+}
 
-        msi-rgb
+package_mmk-mir() {
+    depends=(
+        mmk-video-amd
+        mmk-cpu-amd
+
+        mmk-full
+
+        msi-rgb # mir
+    )
+}
+
+package_mmk-voskhod() {
+    depends=(
+        mmk-video-amd
+        mmk-cpu-amd
+
+        mmk-full
+
+        nct6775-master-dkms-git # voskhod
     )
 }
 
@@ -154,11 +178,13 @@ package_mmk-arch() {
         pkgtools
         # pacdep
         ccache
+        expac
     )
 }
 
 package_mmk-system() {
     depends=(
+        
         logrotate
         unp # unpack all
         bzip2
@@ -180,6 +206,7 @@ package_mmk-system() {
         neovim
         nano
         micro
+        openssl
 
         bind
         bison
@@ -210,12 +237,13 @@ package_mmk-system() {
         man-pages
 
         mmk-build
-        mmk-base-devel
+        mmk-devel
     )
 }
 
-package_mmk-base-devel() {
+package_mmk-devel() {
     depends=(
+        archlinux-keyring
         autoconf
         automake
         binutils
@@ -242,6 +270,7 @@ package_mmk-base-devel() {
         which
     )
 }
+
 package_mmk-fs() {
     install="$pkgname.install"
     depends=(
@@ -255,6 +284,7 @@ package_mmk-fs() {
         mdadm
         lvm2
         util-linux
+        nvme-cli
     )
 }
 
@@ -316,6 +346,9 @@ package_mmk-virtualization() {
         qemu
         virt-manager
         virt-viewer
+        qemu-system-aarch64
+        edk2-ovmf
+        qemu-system-arm
 
         # network
         iptables-nft
@@ -338,6 +371,7 @@ package_mmk-printer() {
         system-config-printer
         xsane
         hplip
+        hplip-plugin
         cups
         cups-pdf
     )
@@ -676,6 +710,7 @@ package_mmk-software-gui() {
         zathura-pdf-mupdf
         libmupdf
         zathura-ps
+        gthumb
 
         zeal
     )
@@ -717,6 +752,7 @@ package_mmk-build() {
         ninja
     )
 }
+
 
 # veted
 
@@ -768,7 +804,23 @@ package_mmk-dev-gui() {
     depends=(
         keybase-gui
         meld
+        # diffuse
         mongodb-compass
+    )
+}
+
+package_mmk-dev-php() {
+    depends=(
+        php
+        asdf-vm
+        php-gd
+        php-intl
+        php-sodium
+        composer
+        re2c
+        mariadb-clients
+        mycli
+        mysql-workbench
     )
 }
 
@@ -821,6 +873,7 @@ package_mmk-keyboard() {
         interception-compose-git
         chrysalis-bin # Kaleidoscope, Chrysalis fo Keyboard.io
         wev
+        wshowkeys
     )
 }
 
