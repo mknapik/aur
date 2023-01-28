@@ -49,8 +49,8 @@ pkgname=(
     mmk-dev-gui
     mmk-dev-php
 )
-pkgver=0.0.1
-pkgrel=12
+pkgver=0.0.3
+pkgrel=1
 arch=(any)
 license=(MIT)
 groups=(mmk)
@@ -892,6 +892,7 @@ package_mmk-neocli() {
         ripgrep
         the_silver_searcher
         sysstat
+        choose # cut
     )
 }
 
